@@ -32,18 +32,18 @@ if (options.rainfall) {
   const threshold = parseFloat(options.rainfall);
   result = result.filter(item => (item.Rainfall || 0) > threshold);
 }
-if (options.humidity) {
-  result = result.map(item => ({
-    Date: item.Date || "N/A",
-    Humidity3pm: item.Humidity3pm ?? "N/A"
-  }));
-}
+result = result.map(item => {
+  const rain = item.Rainfall ?? 'N/A';
+  const pressure = item.Pressure3pm ?? 'N/A';
+  const humidity = options.humidity ? (item.Humidity3pm ?? 'N/A') : '';
+  return `${rain} ${pressure}${humidity ? ' ' + humidity : ''}`;
+});
 if (!options.output && !options.display) {
   process.exit(0);
 }
 if (options.display) {
   console.log("Результат:");
-  console.log(result);
+   console.log(result.join('\n'));
 }
 if (options.output) {
   fs.writeFileSync(options.output, JSON.stringify(result, null, 2), 'utf8');
